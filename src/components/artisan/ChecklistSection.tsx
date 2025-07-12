@@ -8,104 +8,77 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-// Mock data for checklists
+// Mock data for quality control checklists
 const mockChecklists = [
   {
     id: 1,
-    title: 'Daily Safety Inspection',
-    description: 'Complete daily safety checks before starting work',
-    category: 'Safety',
+    title: 'Furniture Assembly Quality Control',
+    description: 'Quality control checklist for wooden chair assembly - Order #2024-001',
+    category: 'Quality Control',
     priority: 'high',
     dueDate: '2024-01-20',
-    assignedBy: 'Safety Manager',
-    estimatedTime: '15 min',
-    status: 'pending',
-    completedAt: null,
+    assignedBy: 'Quality Manager',
+    estimatedTime: '30 min per unit',
+    status: 'active',
+    productName: 'Wooden Dining Chair',
+    orderQuantity: 100,
+    completedUnits: 45,
     steps: [
-      { id: 1, text: 'Check all safety equipment is present', completed: true, critical: true },
-      { id: 2, text: 'Inspect work area for hazards', completed: true, critical: true },
-      { id: 3, text: 'Verify emergency exits are clear', completed: false, critical: true },
-      { id: 4, text: 'Test safety alarms', completed: false, critical: false },
-      { id: 5, text: 'Document any safety concerns', completed: false, critical: false }
+      'Check wood grain alignment and surface smoothness',
+      'Verify all joints are properly fitted without gaps',
+      'Test screw tightness - torque to 25 Nm specification',
+      'Inspect corner brackets for proper alignment',
+      'Check seat stability and weight distribution',
+      'Verify backrest angle matches specification (105°)',
+      'Test all moving parts for smooth operation',
+      'Inspect finish quality - no scratches or dents',
+      'Check hardware mounting - all screws flush',
+      'Verify product dimensions against technical drawing',
+      'Test weight capacity up to 120kg specification',
+      'Final visual inspection for overall quality'
     ]
   },
   {
     id: 2,
-    title: 'Quality Control - Furniture Assembly',
-    description: 'Quality control steps for furniture assembly process',
-    category: 'Quality',
+    title: 'Textile Quality Inspection',
+    description: 'Quality control for cotton fabric production - Order #2024-002',
+    category: 'Quality Control',
     priority: 'medium',
     dueDate: '2024-01-22',
-    assignedBy: 'Quality Manager',
-    estimatedTime: '30 min',
-    status: 'completed',
-    completedAt: '2024-01-19T10:30:00Z',
+    assignedBy: 'Production Supervisor',
+    estimatedTime: '20 min per batch',
+    status: 'active',
+    productName: 'Cotton Fabric Roll',
+    orderQuantity: 100,
+    completedUnits: 78,
     steps: [
-      { id: 1, text: 'Check all joints are properly aligned', completed: true, critical: true },
-      { id: 2, text: 'Verify all screws are tightened to specification', completed: true, critical: true },
-      { id: 3, text: 'Test stability and weight capacity', completed: true, critical: true },
-      { id: 4, text: 'Inspect finish quality', completed: true, critical: false },
-      { id: 5, text: 'Clean and package for delivery', completed: true, critical: false }
-    ]
-  },
-  {
-    id: 3,
-    title: 'Weekly Tool Maintenance',
-    description: 'Regular maintenance schedule for workshop tools',
-    category: 'Maintenance',
-    priority: 'medium',
-    dueDate: '2024-01-21',
-    assignedBy: 'Workshop Supervisor',
-    estimatedTime: '45 min',
-    status: 'in-progress',
-    completedAt: null,
-    steps: [
-      { id: 1, text: 'Clean all power tools', completed: true, critical: false },
-      { id: 2, text: 'Check blade sharpness', completed: true, critical: true },
-      { id: 3, text: 'Lubricate moving parts', completed: false, critical: true },
-      { id: 4, text: 'Test safety features', completed: false, critical: true },
-      { id: 5, text: 'Update maintenance log', completed: false, critical: false }
-    ]
-  },
-  {
-    id: 4,
-    title: 'Project Documentation Review',
-    description: 'Review and update project documentation',
-    category: 'Documentation',
-    priority: 'low',
-    dueDate: '2024-01-25',
-    assignedBy: 'Project Manager',
-    estimatedTime: '20 min',
-    status: 'pending',
-    completedAt: null,
-    steps: [
-      { id: 1, text: 'Review project specifications', completed: false, critical: false },
-      { id: 2, text: 'Update progress photos', completed: false, critical: false },
-      { id: 3, text: 'Complete time tracking forms', completed: false, critical: false },
-      { id: 4, text: 'Submit weekly report', completed: false, critical: false }
+      'Check thread count consistency across the fabric',
+      'Inspect for mismatched threads or color variations',
+      'Verify fabric weight per square meter',
+      'Test fabric strength and tear resistance',
+      'Check for knots, loose threads, or weaving defects',
+      'Inspect edge finishing and selvage quality',
+      'Verify pattern alignment and print registration',
+      'Test color fastness under standard conditions',
+      'Check fabric width consistency throughout roll',
+      'Inspect for oil stains or contamination'
     ]
   }
 ];
 
 export function ChecklistSection() {
-  const [expandedChecklist, setExpandedChecklist] = useState<number | null>(null);
+  const [expandedChecklist, setExpandedChecklist] = useState<number | null>(1);
   const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [filterPriority, setFilterPriority] = useState<string>('all');
 
   const toggleChecklist = (id: number) => {
     setExpandedChecklist(expandedChecklist === id ? null : id);
   };
 
-  const toggleStep = (checklistId: number, stepId: number) => {
-    // In a real app, this would update the backend
-    console.log(`Toggle step ${stepId} in checklist ${checklistId}`);
-  };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed': return 'bg-green-100 text-green-800 border-green-200';
-      case 'in-progress': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'overdue': return 'bg-red-100 text-red-800 border-red-200';
+      case 'active': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
@@ -119,22 +92,18 @@ export function ChecklistSection() {
     }
   };
 
-  const getProgress = (steps: any[]) => {
-    const completed = steps.filter(step => step.completed).length;
-    return (completed / steps.length) * 100;
+  const getProgress = (completed: number, total: number) => {
+    return (completed / total) * 100;
   };
 
   const filteredChecklists = mockChecklists.filter(checklist => {
     const statusMatch = filterStatus === 'all' || checklist.status === filterStatus;
-    const priorityMatch = filterPriority === 'all' || checklist.priority === filterPriority;
-    return statusMatch && priorityMatch;
+    return statusMatch;
   });
 
   const ChecklistCard = ({ checklist }: { checklist: typeof mockChecklists[0] }) => {
     const isExpanded = expandedChecklist === checklist.id;
-    const progress = getProgress(checklist.steps);
-    const completedSteps = checklist.steps.filter(step => step.completed).length;
-    const criticalSteps = checklist.steps.filter(step => step.critical && !step.completed).length;
+    const progress = getProgress(checklist.completedUnits, checklist.orderQuantity);
 
     return (
       <Card className="transition-all duration-200 hover:shadow-md">
@@ -156,7 +125,7 @@ export function ChecklistSection() {
                 {checklist.priority.toUpperCase()}
               </Badge>
               <Badge className={getStatusColor(checklist.status)}>
-                {checklist.status.replace('-', ' ').toUpperCase()}
+                {checklist.status.toUpperCase()}
               </Badge>
             </div>
           </div>
@@ -177,73 +146,56 @@ export function ChecklistSection() {
                   Due: {new Date(checklist.dueDate).toLocaleDateString()}
                 </div>
               </div>
-              
-              {criticalSteps > 0 && (
-                <div className="flex items-center gap-1 text-red-600">
-                  <AlertTriangle className="w-4 h-4" />
-                  {criticalSteps} critical
-                </div>
-              )}
             </div>
             
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span>Progress: {completedSteps}/{checklist.steps.length} steps</span>
+                <span>Progress: {checklist.completedUnits}/{checklist.orderQuantity} units completed</span>
                 <span className="font-medium">{Math.round(progress)}%</span>
               </div>
               <Progress value={progress} className="h-2" />
+            </div>
+
+            <div className="bg-blue-50 p-3 rounded-lg">
+              <div className="text-sm font-medium text-blue-900 mb-1">Current Order Details</div>
+              <div className="text-sm text-blue-700">
+                Product: {checklist.productName} | Quantity: {checklist.orderQuantity} units
+              </div>
             </div>
           </div>
         </CardHeader>
         
         {isExpanded && (
           <CardContent className="pt-0">
-            <div className="space-y-3">
-              {checklist.steps.map(step => (
-                <div 
-                  key={step.id}
-                  className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
-                    step.completed 
-                      ? 'bg-green-50 border-green-200' 
-                      : step.critical 
-                        ? 'bg-red-50 border-red-200'
-                        : 'bg-gray-50 border-gray-200'
-                  }`}
-                >
-                  <button
-                    onClick={() => toggleStep(checklist.id, step.id)}
-                    className="flex-shrink-0"
-                  >
-                    {step.completed ? (
-                      <CheckSquare className="w-5 h-5 text-green-600" />
-                    ) : (
-                      <Square className="w-5 h-5 text-gray-400 hover:text-gray-600" />
-                    )}
-                  </button>
-                  
-                  <span className={`flex-1 ${step.completed ? 'line-through text-gray-500' : 'text-gray-900'}`}>
-                    {step.text}
-                  </span>
-                  
-                  {step.critical && !step.completed && (
-                    <Badge variant="destructive" className="text-xs">
-                      Critical
-                    </Badge>
-                  )}
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-medium text-gray-900 mb-3">Quality Control Steps</h4>
+                <div className="space-y-2">
+                  {checklist.steps.map((step, index) => (
+                    <div 
+                      key={index}
+                      className="flex items-start gap-3 p-2 bg-white rounded border"
+                    >
+                      <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center text-sm font-medium">
+                        {index + 1}
+                      </div>
+                      <span className="text-gray-700 leading-relaxed">{step}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-              
-              {checklist.status === 'completed' && checklist.completedAt && (
-                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-center gap-2 text-green-800">
-                    <CheckCircle className="w-5 h-5" />
-                    <span className="font-medium">Completed</span>
+              </div>
+
+              <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
+                  <div>
+                    <div className="font-medium text-amber-800">Quality Control Instructions</div>
+                    <p className="text-sm text-amber-700 mt-1">
+                      Follow each step in order for every unit produced. Report any defects or issues immediately to the Quality Manager.
+                    </p>
                   </div>
-                  <p className="text-sm text-green-600 mt-1">
-                    Finished on {new Date(checklist.completedAt).toLocaleString()}
-                  </p>
                 </div>
-              )}
+              </div>
             </div>
           </CardContent>
         )}
@@ -265,7 +217,7 @@ export function ChecklistSection() {
                 <p className="text-2xl font-bold text-gray-900">
                   {mockChecklists.length}
                 </p>
-                <p className="text-sm text-gray-600">Total Checklists</p>
+                <p className="text-sm text-gray-600">Active Checklists</p>
               </div>
             </div>
           </CardContent>
@@ -279,9 +231,9 @@ export function ChecklistSection() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-gray-900">
-                  {mockChecklists.filter(c => c.status === 'completed').length}
+                  {mockChecklists.reduce((total, checklist) => total + checklist.completedUnits, 0)}
                 </p>
-                <p className="text-sm text-gray-600">Completed</p>
+                <p className="text-sm text-gray-600">Units Completed</p>
               </div>
             </div>
           </CardContent>
@@ -295,9 +247,9 @@ export function ChecklistSection() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-gray-900">
-                  {mockChecklists.filter(c => c.status === 'in-progress').length}
+                  {mockChecklists.reduce((total, checklist) => total + (checklist.orderQuantity - checklist.completedUnits), 0)}
                 </p>
-                <p className="text-sm text-gray-600">In Progress</p>
+                <p className="text-sm text-gray-600">Units Remaining</p>
               </div>
             </div>
           </CardContent>
@@ -328,21 +280,9 @@ export function ChecklistSection() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="in-progress">In Progress</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
             <SelectItem value="completed">Completed</SelectItem>
-          </SelectContent>
-        </Select>
-        
-        <Select value={filterPriority} onValueChange={setFilterPriority}>
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Filter by priority" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Priorities</SelectItem>
-            <SelectItem value="high">High Priority</SelectItem>
-            <SelectItem value="medium">Medium Priority</SelectItem>
-            <SelectItem value="low">Low Priority</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
           </SelectContent>
         </Select>
         
