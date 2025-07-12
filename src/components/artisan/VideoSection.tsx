@@ -1,194 +1,285 @@
 
 import React, { useState } from 'react';
-import { Play, Clock, Eye, Star, User, Calendar, FileText } from 'lucide-react';
+import { Play, Clock, Eye, Star, Filter, Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-// Mock data for the assigned video based on current order
-const assignedVideo = {
-  id: 1,
-  title: 'Wooden Chair Assembly - Model A',
-  description: 'Complete step-by-step guide for assembling Model A wooden chairs with quality control checkpoints',
-  duration: '24:15',
-  views: 1456,
-  rating: 4.9,
-  orderReference: 'ORD-2024-001',
-  thumbnail: '/placeholder.svg',
-  uploadedBy: 'Production Manager',
-  uploadDate: '2024-01-18',
-  completed: false,
-  sections: [
-    { id: 1, title: 'Safety Preparation', timestamp: '0:00', duration: '2:30' },
-    { id: 2, title: 'Wood Preparation & Inspection', timestamp: '2:30', duration: '3:45' },
-    { id: 3, title: 'Joint Assembly Techniques', timestamp: '6:15', duration: '5:20' },
-    { id: 4, title: 'Hardware Installation', timestamp: '11:35', duration: '4:15' },
-    { id: 5, title: 'Quality Control Checkpoints', timestamp: '15:50', duration: '6:10' },
-    { id: 6, title: 'Final Assembly & Testing', timestamp: '22:00', duration: '2:15' }
-  ]
-};
+// Mock data for videos
+const mockVideos = [
+  {
+    id: 1,
+    title: 'Basic Woodworking Techniques',
+    description: 'Learn fundamental woodworking skills and safety procedures',
+    duration: '12:45',
+    views: 1234,
+    rating: 4.8,
+    category: 'Fundamentals',
+    thumbnail: '/placeholder.svg',
+    uploadedBy: 'Admin',
+    uploadDate: '2024-01-15',
+    completed: false
+  },
+  {
+    id: 2,
+    title: 'Advanced Joinery Methods',
+    description: 'Master complex joinery techniques for professional results',
+    duration: '18:30',
+    views: 856,
+    rating: 4.9,
+    category: 'Advanced',
+    thumbnail: '/placeholder.svg',
+    uploadedBy: 'Admin',
+    uploadDate: '2024-01-10',
+    completed: true
+  },
+  {
+    id: 3,
+    title: 'Safety Protocols & Best Practices',
+    description: 'Essential safety guidelines for workshop operations',
+    duration: '8:15',
+    views: 2156,
+    rating: 4.7,
+    category: 'Safety',
+    thumbnail: '/placeholder.svg',
+    uploadedBy: 'Admin',
+    uploadDate: '2024-01-12',
+    completed: false
+  },
+  {
+    id: 4,
+    title: 'Tool Maintenance Guide',
+    description: 'Keep your tools in perfect condition with proper maintenance',
+    duration: '15:20',
+    views: 934,
+    rating: 4.6,
+    category: 'Maintenance',
+    thumbnail: '/placeholder.svg',
+    uploadedBy: 'Admin',
+    uploadDate: '2024-01-08',
+    completed: false
+  },
+  {
+    id: 5,
+    title: 'Quality Control Standards',
+    description: 'Understanding and implementing quality control measures',
+    duration: '22:10',
+    views: 1567,
+    rating: 4.9,
+    category: 'Quality',
+    thumbnail: '/placeholder.svg',
+    uploadedBy: 'Admin',
+    uploadDate: '2024-01-05',
+    completed: true
+  },
+  {
+    id: 6,
+    title: 'Project Planning & Execution',
+    description: 'Effective project management for artisan work',
+    duration: '16:45',
+    views: 723,
+    rating: 4.5,
+    category: 'Management',
+    thumbnail: '/placeholder.svg',
+    uploadedBy: 'Admin',
+    uploadDate: '2024-01-03',
+    completed: false
+  }
+];
 
 export function VideoSection() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [selectedSection, setSelectedSection] = useState<number | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
 
-  const handleSectionClick = (sectionId: number) => {
-    setSelectedSection(sectionId);
-    console.log(`Jumping to section ${sectionId}`);
-  };
+  const categories = ['all', 'Fundamentals', 'Advanced', 'Safety', 'Maintenance', 'Quality', 'Management'];
 
-  return (
-    <div className="space-y-6">
-      {/* Video Header */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-xl">{assignedVideo.title}</CardTitle>
-              <p className="text-sm text-gray-600 mt-1">
-                Order Reference: {assignedVideo.orderReference}
-              </p>
-            </div>
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-              Required Training
-            </Badge>
-          </div>
-          
-          <div className="flex items-center gap-6 text-sm text-gray-500 mt-4">
-            <div className="flex items-center gap-1">
-              <User className="w-4 h-4" />
-              {assignedVideo.uploadedBy}
-            </div>
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
-              {new Date(assignedVideo.uploadDate).toLocaleDateString()}
-            </div>
-            <div className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              {assignedVideo.duration}
-            </div>
-            <div className="flex items-center gap-1">
-              <Eye className="w-4 h-4" />
-              {assignedVideo.views.toLocaleString()} views
-            </div>
-            <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              {assignedVideo.rating}
-            </div>
-          </div>
-        </CardHeader>
-      </Card>
+  const filteredVideos = mockVideos.filter(video => 
+    filterCategory === 'all' || video.category === filterCategory
+  );
 
-      {/* Main Video Player */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <Card>
-            <CardContent className="p-0">
-              <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center relative">
-                <div className="text-center text-white">
-                  <Play className="w-16 h-16 mx-auto mb-4 cursor-pointer hover:scale-110 transition-transform" 
-                       onClick={() => setIsPlaying(!isPlaying)} />
-                  <p className="text-lg font-medium">{assignedVideo.title}</p>
-                  <p className="text-sm opacity-75">Click to start training video</p>
-                </div>
-                
-                {/* Video overlay with duration */}
-                <div className="absolute bottom-4 right-4">
-                  <Badge className="bg-black/70 text-white">
-                    {assignedVideo.duration}
-                  </Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          {/* Video Description */}
-          <div className="mt-6 space-y-4">
-            <div>
-              <h2 className="text-lg font-semibold mb-2">About This Training</h2>
-              <p className="text-gray-600">{assignedVideo.description}</p>
-            </div>
-            
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-start gap-3">
-                <FileText className="w-5 h-5 text-blue-600 mt-0.5" />
-                <div>
-                  <h4 className="font-medium text-blue-900">Training Requirements</h4>
-                  <ul className="text-sm text-blue-800 mt-2 space-y-1">
-                    <li>• Watch the complete video before starting production</li>
-                    <li>• Pay special attention to quality control checkpoints</li>
-                    <li>• Refer back to specific sections as needed during production</li>
-                    <li>• Contact supervisor if any steps are unclear</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+  const VideoCard = ({ video, isCompact = false }: { video: typeof mockVideos[0], isCompact?: boolean }) => (
+    <Card 
+      className={`group cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] ${
+        video.completed ? 'border-green-200 bg-green-50/30' : 'border-gray-200'
+      } ${isCompact ? 'flex' : ''}`}
+      onClick={() => setSelectedVideo(video.id)}
+    >
+      <div className={`relative ${isCompact ? 'w-48 flex-shrink-0' : 'aspect-video'}`}>
+        <img 
+          src={video.thumbnail} 
+          alt={video.title}
+          className="w-full h-full object-cover rounded-t-lg"
+        />
+        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <Play className="w-12 h-12 text-white" />
+        </div>
+        <Badge 
+          variant="secondary" 
+          className="absolute top-2 right-2 bg-black/70 text-white text-xs"
+        >
+          {video.duration}
+        </Badge>
+        {video.completed && (
+          <Badge 
+            variant="default" 
+            className="absolute top-2 left-2 bg-green-600 text-white text-xs"
+          >
+            Completed
+          </Badge>
+        )}
+      </div>
+      
+      <CardContent className={`${isCompact ? 'flex-1' : ''} p-4`}>
+        <div className="flex items-start justify-between mb-2">
+          <Badge variant="outline" className="text-xs">
+            {video.category}
+          </Badge>
+          <div className="flex items-center gap-1 text-xs text-gray-500">
+            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+            {video.rating}
           </div>
         </div>
         
-        {/* Video Sections */}
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Video Sections</CardTitle>
-              <p className="text-sm text-gray-600">Jump to specific parts of the training</p>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {assignedVideo.sections.map((section) => (
-                <div 
-                  key={section.id}
-                  className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                    selectedSection === section.id 
-                      ? 'border-blue-300 bg-blue-50' 
-                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                  onClick={() => handleSectionClick(section.id)}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <h4 className="font-medium text-sm">{section.title}</h4>
-                    <Badge variant="secondary" className="text-xs">
-                      {section.duration}
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-gray-500">Start at {section.timestamp}</p>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-          
-          {/* Progress Tracking */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Training Progress</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Video Completion</span>
-                  <span className="text-sm font-medium">
-                    {assignedVideo.completed ? '100%' : '0%'}
-                  </span>
-                </div>
-                
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      assignedVideo.completed ? 'bg-green-500 w-full' : 'bg-blue-500 w-0'
-                    }`}
-                  ></div>
-                </div>
-                
-                <Button 
-                  variant={assignedVideo.completed ? "secondary" : "default"}
-                  className="w-full mt-4"
-                  onClick={() => console.log('Mark video as completed')}
-                >
-                  {assignedVideo.completed ? 'Training Completed ✓' : 'Mark as Completed'}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{video.title}</h3>
+        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{video.description}</p>
+        
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
+              <Eye className="w-3 h-3" />
+              {video.views.toLocaleString()}
+            </div>
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              {video.duration}
+            </div>
+          </div>
+          <span>By {video.uploadedBy}</span>
         </div>
+      </CardContent>
+    </Card>
+  );
+
+  if (selectedVideo) {
+    const video = mockVideos.find(v => v.id === selectedVideo);
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <Button 
+            variant="outline" 
+            onClick={() => setSelectedVideo(null)}
+            className="mb-4"
+          >
+            ← Back to Videos
+          </Button>
+        </div>
+        
+        <div className="grid lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <Card>
+              <CardContent className="p-0">
+                <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <Play className="w-16 h-16 mx-auto mb-4" />
+                    <p className="text-lg font-medium">{video?.title}</p>
+                    <p className="text-sm opacity-75">Video Player Placeholder</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <div className="mt-6 space-y-4">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">{video?.title}</h1>
+                <p className="text-gray-600">{video?.description}</p>
+              </div>
+              
+              <div className="flex items-center gap-6 text-sm text-gray-500">
+                <div className="flex items-center gap-1">
+                  <Eye className="w-4 h-4" />
+                  {video?.views.toLocaleString()} views
+                </div>
+                <div className="flex items-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  {video?.duration}
+                </div>
+                <div className="flex items-center gap-1">
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  {video?.rating} rating
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Related Videos</h3>
+            <div className="space-y-3">
+              {mockVideos.filter(v => v.id !== selectedVideo).slice(0, 4).map(relatedVideo => (
+                <VideoCard key={relatedVideo.id} video={relatedVideo} isCompact />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Controls */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Select value={filterCategory} onValueChange={setFilterCategory}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Filter by category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map(category => (
+                <SelectItem key={category} value={category}>
+                  {category === 'all' ? 'All Categories' : category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          <Badge variant="secondary" className="text-sm">
+            {filteredVideos.length} videos
+          </Badge>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <Button
+            variant={viewMode === 'grid' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('grid')}
+          >
+            <Grid className="w-4 h-4" />
+          </Button>
+          <Button
+            variant={viewMode === 'list' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('list')}
+          >
+            <List className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Video Grid/List */}
+      <div className={
+        viewMode === 'grid' 
+          ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+          : 'space-y-4'
+      }>
+        {filteredVideos.map(video => (
+          <VideoCard 
+            key={video.id} 
+            video={video} 
+            isCompact={viewMode === 'list'}
+          />
+        ))}
       </div>
     </div>
   );
