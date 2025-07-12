@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Play, Clock, Eye, Star, Filter, Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -176,49 +175,38 @@ export function VideoSection() {
           </Button>
         </div>
         
-        <div className="grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <Card>
-              <CardContent className="p-0">
-                <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <Play className="w-16 h-16 mx-auto mb-4" />
-                    <p className="text-lg font-medium">{video?.title}</p>
-                    <p className="text-sm opacity-75">Video Player Placeholder</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <div className="mt-6 space-y-4">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">{video?.title}</h1>
-                <p className="text-gray-600">{video?.description}</p>
-              </div>
-              
-              <div className="flex items-center gap-6 text-sm text-gray-500">
-                <div className="flex items-center gap-1">
-                  <Eye className="w-4 h-4" />
-                  {video?.views.toLocaleString()} views
-                </div>
-                <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  {video?.duration}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  {video?.rating} rating
+        <div className="max-w-4xl mx-auto">
+          <Card>
+            <CardContent className="p-0">
+              <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
+                <div className="text-center text-white">
+                  <Play className="w-16 h-16 mx-auto mb-4" />
+                  <p className="text-lg font-medium">{video?.title}</p>
+                  <p className="text-sm opacity-75">Video Player Placeholder</p>
                 </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
           
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Related Videos</h3>
-            <div className="space-y-3">
-              {mockVideos.filter(v => v.id !== selectedVideo).slice(0, 4).map(relatedVideo => (
-                <VideoCard key={relatedVideo.id} video={relatedVideo} isCompact />
-              ))}
+          <div className="mt-6 space-y-4">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">{video?.title}</h1>
+              <p className="text-gray-600">{video?.description}</p>
+            </div>
+            
+            <div className="flex items-center gap-6 text-sm text-gray-500">
+              <div className="flex items-center gap-1">
+                <Eye className="w-4 h-4" />
+                {video?.views.toLocaleString()} views
+              </div>
+              <div className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                {video?.duration}
+              </div>
+              <div className="flex items-center gap-1">
+                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                {video?.rating} rating
+              </div>
             </div>
           </div>
         </div>
