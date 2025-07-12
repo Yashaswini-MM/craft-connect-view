@@ -184,18 +184,6 @@ export function ChecklistSection() {
                   ))}
                 </div>
               </div>
-
-              <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg">
-                <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
-                  <div>
-                    <div className="font-medium text-amber-800">Quality Control Instructions</div>
-                    <p className="text-sm text-amber-700 mt-1">
-                      Follow each step in order for every unit produced. Report any defects or issues immediately to the Quality Manager.
-                    </p>
-                  </div>
-                </div>
-              </div>
             </div>
           </CardContent>
         )}
@@ -205,73 +193,6 @@ export function ChecklistSection() {
 
   return (
     <div className="space-y-6">
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <CheckSquare className="w-5 h-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {mockChecklists.length}
-                </p>
-                <p className="text-sm text-gray-600">Active Checklists</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-green-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {mockChecklists.reduce((total, checklist) => total + checklist.completedUnits, 0)}
-                </p>
-                <p className="text-sm text-gray-600">Units Completed</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <Clock className="w-5 h-5 text-yellow-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {mockChecklists.reduce((total, checklist) => total + (checklist.orderQuantity - checklist.completedUnits), 0)}
-                </p>
-                <p className="text-sm text-gray-600">Units Remaining</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-red-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {mockChecklists.filter(c => c.priority === 'high').length}
-                </p>
-                <p className="text-sm text-gray-600">High Priority</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Filters */}
       <div className="flex items-center gap-4">
         <Select value={filterStatus} onValueChange={setFilterStatus}>
