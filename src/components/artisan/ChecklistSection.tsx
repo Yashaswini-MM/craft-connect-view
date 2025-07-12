@@ -133,27 +133,12 @@ export function ChecklistSection() {
             <div className="flex items-center justify-between text-sm text-gray-600">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
-                  <User className="w-4 h-4" />
-                  {checklist.assignedBy}
-                </div>
-                <div className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
                   {checklist.estimatedTime}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  Due: {new Date(checklist.dueDate).toLocaleDateString()}
                 </div>
               </div>
             </div>
             
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span>Progress: {checklist.completedUnits}/{checklist.orderQuantity} units completed</span>
-                <span className="font-medium">{Math.round(progress)}%</span>
-              </div>
-              <Progress value={progress} className="h-2" />
-            </div>
 
             <div className="bg-blue-50 p-3 rounded-lg">
               <div className="text-sm font-medium text-blue-900 mb-1">Current Order Details</div>
